@@ -1,0 +1,398 @@
+import pygame
+import random
+from pygame.locals import *
+
+# Inizializza Pygame
+pygame.init()
+
+#Gestione delle sonorità
+#suono del paddle di sinistra al tocco della palla 
+hit_sound_paddle_left = pygame.mixer.Sound('Pong.mp3')
+#suono del paddle di destra al tocco della palla
+hit_sound_paddle_right = pygame.mixer.Sound('Ping.mp3')
+#suono di vittoria
+hit_victory = pygame.mixer.Sound('vict1.mp3')
+#suono allungamento paddle
+hit_paddle_allungamento = pygame.mixer.Sound('bonus2.wav')
+
+#la palla fuoriesce dalla schermo a destra o a sinistra
+out_ball = pygame.mixer.Sound('outbordo.wav')
+
+#suono collisione muro
+hit_wall = pygame.mixer.Sound('hit_wall.wav')
+
+#suono di comparsa del muro
+see_wall = pygame.mixer.Sound('comparsa_wall1.wav')
+
+#start music
+hit_start = pygame.mixer.Sound('start_music2.wav')
+
+
+last_hit_paddle = None  # Inizialmente, nessun paddle ha colpito la palla
+is_vs_computer = False  # Imposta il default a due giocatori umani
+
+# Imposta le dimensioni della finestra di gioco
+width, height = 640, 480
+screen_size = (640,480)
+screen = pygame.display.set_mode(screen_size)
+pygame.display.set_caption("Pong Variant by Grando Ruggero")
+
+#creazione della lista utilizzata per il muro centrare
+wall_rects = []
+
+# Impostazioni del pulsante START
+button_color = (50, 205, 50)  # Colore verde
+button_width, button_height = 200, 80
+button_rect = pygame.Rect((width - button_width) / 2, (height - button_height) / 2, button_width, button_height)
+button_font = pygame.font.SysFont(None, 40)
+button_text = button_font.render('START', True, (255, 255, 255))  # Testo bianco
+button_text_rect = button_text.get_rect(center=button_rect.center)
+# Impostazioni VS COMPUTER
+button_vs_computer_rect = pygame.Rect((width - button_width) / 2, (height - button_height) / 2 + 100, button_width, button_height)
+button_vs_computer_text = button_font.render('VS COMPUTER', True, (255, 255, 255))  # Testo bianco
+button_vs_computer_text_rect = button_vs_computer_text.get_rect(center=button_vs_computer_rect.center)
+
+#titolo schermata principale
+title_font_size = 80  # Scegli la dimensione del font per il titolo
+title_font = pygame.font.SysFont('centurygothic', title_font_size)
+title_text = title_font.render('PONG VARIANT', True, (255, 255, 255))  # Testo bianco
+title_text_rect = title_text.get_rect(center=(width // 2, 50))  # Posiziona il testo al centro, 50 pixel dall'alto
+
+
+# Punteggi dei giocatori
+left_score = 0
+right_score = 0
+
+
+# Font per visualizzare il punteggio
+font_size = 56  # Cambia la dimensione del font qui
+font = pygame.font.SysFont(None, font_size)
+
+# Font per il messaggio di vittoria
+victory_font_size = 70  # Cambia la dimensione del font per il messaggio di vittoria
+victory_font = pygame.font.SysFont(None, victory_font_size)
+
+# Definisci i colori
+bg_color = (0, 0, 0)
+paddle_color = (0, 200, 113)
+paddle_color_left = (0, 200, 113)
+paddle_color_right = (0, 200, 113)
+wall_color = (255,0,0)
+last_hit = None
+
+# Imposta le dimensioni e la posizione dei paddle
+paddle_width, paddle_height = 10, 60
+left_paddle = pygame.Rect(30, height/2 - 30, paddle_width, paddle_height)  # Paddle sinistro
+right_paddle = pygame.Rect(width - 40, height/2 - 30, paddle_width, paddle_height)  # Paddle destro
+
+
+paddle_speed = 5
+left_paddle_pos = pygame.Rect(50, height/2 - paddle_height/2, paddle_width, paddle_height)
+right_paddle_pos = pygame.Rect(width - 50 - paddle_width, height/2 - paddle_height/2, paddle_width, paddle_height)
+
+# Imposta la velocità e la direzione della palla
+ball_x_speed = 3
+ball_y_speed = 3
+ball_pos = pygame.Rect(width/2, height/2, 10, 10)
+
+# Configurazione del bonus
+bonus_font = pygame.font.SysFont(None, 40)  # Cambia la dimensione del font come preferisci
+bonus_text = bonus_font.render('BONUS', True, (255, 255, 255))  # Cambia il colore come preferisci
+bonus_text_width, bonus_text_height = bonus_text.get_size()
+bonus_pos = pygame.Rect(random.randint(100, width - 100), random.randint(100, height - 100), bonus_text_width, bonus_text_height)
+angle = 0  # Angolo di rotazione iniziale
+bonus_active = True
+
+
+
+
+def create_center_wall():
+    global wall_rects
+    wall_rects = []
+    wall_width = 5
+    rect_height = 30
+    gap_height = 20
+    y = 0
+    see_wall.play()
+    
+    while y < height:
+        if random.random() < 0.5:  # 50% probabilità di creare un gap
+            y += gap_height
+        else:
+            rect = pygame.Rect(width // 2 - wall_width // 2, y, wall_width, rect_height)
+            wall_rects.append(rect)
+            y += rect_height + gap_height
+
+
+# Funzione per aggiornare la posizione dei paddle
+def update_paddle(paddle_pos, up_key, down_key, is_computer=False):
+    if is_computer:
+        if ball_pos.centery > paddle_pos.centery and paddle_pos.bottom < height:
+            paddle_pos.y += paddle_speed
+        elif ball_pos.centery < paddle_pos.centery and paddle_pos.top > 0:
+            paddle_pos.y -= paddle_speed
+    else:
+        keys = pygame.key.get_pressed()
+        if keys[up_key] and paddle_pos.top > 0:
+            paddle_pos.y -= paddle_speed
+        if keys[down_key] and paddle_pos.bottom < height:
+            paddle_pos.y += paddle_speed
+
+        
+# Carica l'immagine di sfondo
+background = pygame.image.load("background1.png")
+background = pygame.transform.scale(background,screen_size)
+
+
+# Funzione per disegnare l'immagine di sfondo
+def draw_background():
+    screen.blit(background, (0, 0))
+    
+# Funzione per resettare le variabili del gioco
+def reset_game():
+    global left_score, right_score, ball_pos, ball_x_speed,bonus_active, left_paddle, right_paddle, height, last_hit_paddle, left_paddle_pos,right_paddle_pos,paddle_color,paddle_color_right,paddle_color_left  # o qualunque sia l'altezza originale
+    right_paddle.height = 60  # o qualunque sia l'altezza originale
+
+    left_score = 0
+    right_score = 0
+    ball_pos = pygame.Rect(width/2, height/2, 10, 10)
+    ball_x_speed = 3
+    ball_y_speed = 3
+    # Decidi se il bonus è attivo in questo round
+    bonus_active = random.choice([True, False])
+    
+    left_paddle_pos.height = 60
+    right_paddle_pos.height = 60 
+    
+    paddle_color_left = (0, 200, 113)
+    paddle_color_right = (0,200,113)
+    
+    last_hit_paddle = None
+    
+    if random.randint(1, 2) == 1:
+        create_center_wall()
+
+    
+# Funzione per disegnare il punteggio
+def draw_score():
+    score_color = (0, 200, 113)  # Colore verde
+    left_text = font.render(str(left_score), True, score_color)
+    right_text = font.render(str(right_score), True, score_color)
+
+    screen.blit(left_text, (width/4 - left_text.get_width()/2, 10))
+    screen.blit(right_text, (3*width/4 - right_text.get_width()/2, 10))
+    
+def draw_start_button():
+    pygame.draw.rect(screen, button_color, button_rect)
+    screen.blit(button_text, button_text_rect.topleft)
+    pygame.draw.rect(screen, button_color, button_vs_computer_rect)
+    screen.blit(button_vs_computer_text, button_vs_computer_text_rect.topleft)
+    
+# Funzione per disegnare il muro centrale    
+def draw_center_wall():
+    for rect in wall_rects:
+        pygame.draw.rect(screen, wall_color, rect)
+        
+# Funzione per gestire la collisione della palla con il paddle
+
+def ball_paddle_collision(ball, paddle, is_left_paddle):
+    if ball.colliderect(paddle):
+        # Calcola la distanza tra il centro della palla e il centro del paddle
+        distance_from_center = abs(ball.centery - paddle.centery)
+        
+        # Calcola il rapporto tra la distanza dal centro e la metà dell'altezza del paddle
+        collision_position_ratio = distance_from_center / (paddle.height / 2)
+        
+        # Calcola la nuova velocità della palla sulla base di dove ha colpito il paddle
+        speed_multiplier = 1 + 0.5 * collision_position_ratio  # Puoi modificare il 0.5 per rendere l'effetto più o meno pronunciato
+        
+        global ball_x_speed, ball_y_speed
+        ball_x_speed = -ball_x_speed * speed_multiplier  # Inverte la direzione x della palla e modifica la velocità
+        ball_y_speed += collision_position_ratio * ball_y_speed  # Modifica la velocità y della palla
+        
+        global last_hit
+
+        if is_left_paddle:
+            hit_sound_paddle_left.play()
+            last_hit = "left"
+        else:
+            hit_sound_paddle_right.play()
+            last_hit = "right"
+        
+# Funzione che gestisce la pressione del tast "VS COMPUTER"        
+def is_vs_computer_button_clicked():
+    mouse_pos = pygame.mouse.get_pos()
+    return button_vs_computer_rect.collidepoint(mouse_pos)
+        
+# Funzione che gestisce la pressione del tasto "START"
+def is_button_clicked():
+    mouse_pos = pygame.mouse.get_pos()
+    return button_rect.collidepoint(mouse_pos)
+    
+#Funzione per il messaggio di vittoria
+def draw_victory_message(winner):
+    victory_color = (255, 0, 0)  # Colore rosso per il messaggio di vittoria
+    if winner == "left":
+        message = "Ha vinto il giocatore 1!"
+        hit_victory.play()
+    else:
+        message = "Ha vinto il giocatore 2!"
+        hit_victory.play()
+    victory_text = victory_font.render(message, True, victory_color)
+    screen.blit(victory_text, (width/2 - victory_text.get_width()/2, height/2 - victory_text.get_height()/2))
+    
+def start_screen():
+    global is_vs_computer
+    while True:
+        hit_start.play()
+        for event in pygame.event.get():
+            
+            if event.type == QUIT:
+                hit_start.stop()
+                pygame.quit()
+                exit()
+            if event.type == MOUSEBUTTONDOWN:
+                if is_button_clicked():
+                    hit_start.stop()
+                    return
+                if is_vs_computer_button_clicked():
+                    is_vs_computer = True
+                    hit_start.stop()
+                    
+                    return
+
+        screen.fill(bg_color)
+        screen.blit(title_text, title_text_rect.topleft)  # Disegna il testo del titolo
+      
+        draw_start_button()
+        pygame.display.flip()
+        
+        
+# Mostra la schermata iniziale
+start_screen()            
+    
+
+# Ciclo principale del gioco
+running = True
+clock = pygame.time.Clock()
+
+while running:
+    clock.tick(60)
+    
+     
+    # Gestione degli eventi
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            running = False
+    
+    
+    # Aggiorna la posizione dei paddle
+    update_paddle(left_paddle_pos, K_w, K_s)
+    update_paddle(right_paddle_pos, K_UP, K_DOWN, is_vs_computer)
+
+
+    # Aggiorna la posizione della palla
+    ball_pos.x += ball_x_speed
+    ball_pos.y += ball_y_speed
+
+    # Rimbalzo della palla sui bordi verticali
+    if ball_pos.top <= 0 or ball_pos.bottom >= height:
+        ball_y_speed = -ball_y_speed
+        
+
+    # Collisione della palla con i paddle
+    ball_paddle_collision(ball_pos, left_paddle_pos, is_left_paddle=True)
+    ball_paddle_collision(ball_pos, right_paddle_pos, is_left_paddle=False)
+    
+  
+    
+    # Aggiorna il punteggio se la palla va oltre i bordi orizzontali
+    if ball_pos.left <= 0:
+        right_score += 1
+        ball_pos.x = width/2  # Reset della posizione della palla
+        ball_x_speed = -ball_x_speed  # Reset della direzione della palla
+        ball_x_speed = 2  # Reset della velocità della palla
+        ball_y_speed = random.choice([-2, 2])  # Reset della velocità della palla con direzione casuale
+        if random.randint(1, 2) == 1:
+            create_center_wall()
+        out_ball.play()
+
+
+    if ball_pos.right >= width:
+        left_score += 1
+        ball_pos.x = width/2
+        ball_x_speed = -ball_x_speed
+        ball_x_speed = 2  # Reset della velocità della palla
+        ball_y_speed = random.choice([-2, 2])  # Reset della velocità della palla con direzione casuale
+        out_ball.play()
+    
+    for rect in wall_rects:
+        if ball_pos.colliderect(rect):
+            ball_x_speed = -ball_x_speed  # la palla rimbalza quando colpisce il muro centrale
+            hit_wall.play()
+            break 
+    
+
+    # Pulisci lo schermo
+    screen.fill(bg_color)
+    
+    if bonus_active:
+        # Ruotare il Testo
+        angle += 1  # Aumenta l'angolo ad ogni frame
+        rotated_bonus_text = pygame.transform.rotate(bonus_text, angle)
+        
+        rect = rotated_bonus_text.get_rect(center=bonus_pos.center)
+        screen.blit(rotated_bonus_text, rect.topleft)  
+        
+        
+    if bonus_active and ball_pos.colliderect(bonus_pos):
+        print('la palla ha colpito il bonus')
+        if last_hit is not None:
+            if last_hit == "left":
+                print('raddopia il paddle left')
+                left_paddle_pos.height = 120
+                paddle_color_left = (255,0,0)
+                hit_paddle_allungamento.play()
+   
+            else:
+                print('raddoppia il paddle right')
+                
+                right_paddle_pos.height = 120
+                paddle_color_right = (255,0,0)
+                hit_paddle_allungamento.play()
+        
+    
+        bonus_active = False 
+
+    
+    #disegna il background - rimosso per ora
+    #draw_background()   
+    draw_score()
+
+    # Disegna i paddle e la palla
+    pygame.draw.rect(screen, paddle_color_left, left_paddle_pos)
+    pygame.draw.rect(screen, paddle_color_right, right_paddle_pos)
+    pygame.draw.ellipse(screen, paddle_color, ball_pos)
+    
+     
+    # Controlla se uno dei giocatori ha vinto
+    if left_score == 3:
+        draw_victory_message("left")
+        pygame.display.flip()
+        pygame.time.wait(3000)  # Mostra il messaggio per 3 secondi
+        reset_game()
+        start_screen()
+    elif right_score == 3:
+        draw_victory_message("right")
+        pygame.display.flip()
+        pygame.time.wait(3000)  # Mostra il messaggio per 3 secondi
+        reset_game()
+        start_screen()
+
+    # disegna il muro centrale
+    draw_center_wall()
+    # Aggiorna la schermata
+    pygame.display.flip()
+
+# Chiudi Pygame
+pygame.quit()
