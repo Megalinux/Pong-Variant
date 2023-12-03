@@ -11,16 +11,12 @@ Relive a classic. Here is a short implementation of the Atari game Pong in Pytho
 
 ### Run ###
 
-1. Configure strategy and parameters on strategy.py with text editor as already described
-2. In terminal/cmd go to Your main Backtester's folder.
-3. Run BacktestTool by command: python3 backtester_v1 {exchange} {pair}
-    Example of run backtester:
+1. In terminal/cmd go to Your main Backtester's folder.
+2. Run Pong Variant
+    Example of run Pong Variant:
 
-    * `python3 backtester_v1 poloniex 'ATOM/BTC'`
-    * `python3 backtester_v1 poloniex 'DOGE/BTC'`
-    * `python3 backtester_v1 poloniex 'ETH/BTC'` 
-    * `python3 backtester_v1 binance 'ETC/BTC'` 
-
+    * `python3 Pong.py`
+  
 
 ### Requirements ###
 
