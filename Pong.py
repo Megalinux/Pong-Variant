@@ -60,15 +60,15 @@ left_score = 0
 right_score = 0
 
 
-# Font per visualizzare il punteggio
-font_size = 56  # Cambia la dimensione del font qui
+# Font to display the score
+font_size = 56  # Change the font size here
 font = pygame.font.SysFont(None, font_size)
 
-# Font per il messaggio di vittoria
-victory_font_size = 70  # Cambia la dimensione del font per il messaggio di vittoria
+# Font for victory message
+victory_font_size = 70  # Change the font size for the victory message
 victory_font = pygame.font.SysFont(None, victory_font_size)
 
-# Definisci i colori
+# Define the colors
 bg_color = (0, 0, 0)
 paddle_color = (0, 200, 113)
 paddle_color_left = (0, 200, 113)
@@ -76,27 +76,27 @@ paddle_color_right = (0, 200, 113)
 wall_color = (255,0,0)
 last_hit = None
 
-# Imposta le dimensioni e la posizione dei paddle
+# Set the size and position of the paddles
 paddle_width, paddle_height = 10, 60
-left_paddle = pygame.Rect(30, height/2 - 30, paddle_width, paddle_height)  # Paddle sinistro
-right_paddle = pygame.Rect(width - 40, height/2 - 30, paddle_width, paddle_height)  # Paddle destro
+left_paddle = pygame.Rect(30, height/2 - 30, paddle_width, paddle_height)  # Left Paddle 
+right_paddle = pygame.Rect(width - 40, height/2 - 30, paddle_width, paddle_height)  # Right Paddle 
 
 
 paddle_speed = 5
 left_paddle_pos = pygame.Rect(50, height/2 - paddle_height/2, paddle_width, paddle_height)
 right_paddle_pos = pygame.Rect(width - 50 - paddle_width, height/2 - paddle_height/2, paddle_width, paddle_height)
 
-# Imposta la velocità e la direzione della palla
+# Set the speed and direction of the ball
 ball_x_speed = 3
 ball_y_speed = 3
 ball_pos = pygame.Rect(width/2, height/2, 10, 10)
 
-# Configurazione del bonus
-bonus_font = pygame.font.SysFont(None, 40)  # Cambia la dimensione del font come preferisci
-bonus_text = bonus_font.render('BONUS', True, (255, 255, 255))  # Cambia il colore come preferisci
+# Bonus configuration
+bonus_font = pygame.font.SysFont(None, 40)  # Change the font size as you like
+bonus_text = bonus_font.render('BONUS', True, (255, 255, 255))  # Change the color as you like
 bonus_text_width, bonus_text_height = bonus_text.get_size()
 bonus_pos = pygame.Rect(random.randint(100, width - 100), random.randint(100, height - 100), bonus_text_width, bonus_text_height)
-angle = 0  # Angolo di rotazione iniziale
+angle = 0  # Initial rotation angle
 bonus_active = True
 
 
@@ -112,7 +112,7 @@ def create_center_wall():
     see_wall.play()
     
     while y < height:
-        if random.random() < 0.5:  # 50% probabilità di creare un gap
+        if random.random() < 0.5:  # 50% chance of creating a gap
             y += gap_height
         else:
             rect = pygame.Rect(width // 2 - wall_width // 2, y, wall_width, rect_height)
@@ -120,7 +120,7 @@ def create_center_wall():
             y += rect_height + gap_height
 
 
-# Funzione per aggiornare la posizione dei paddle
+# Function to update the position of the paddles
 def update_paddle(paddle_pos, up_key, down_key, is_computer=False):
     if is_computer:
         if ball_pos.centery > paddle_pos.centery and paddle_pos.bottom < height:
@@ -135,16 +135,16 @@ def update_paddle(paddle_pos, up_key, down_key, is_computer=False):
             paddle_pos.y += paddle_speed
 
         
-# Carica l'immagine di sfondo
+# Upload the background image
 background = pygame.image.load("background1.png")
 background = pygame.transform.scale(background,screen_size)
 
 
-# Funzione per disegnare l'immagine di sfondo
+# Function to draw the background image
 def draw_background():
     screen.blit(background, (0, 0))
     
-# Funzione per resettare le variabili del gioco
+# Function to reset game variables
 def reset_game():
     global left_score, right_score, ball_pos, ball_x_speed,bonus_active, left_paddle, right_paddle, height, last_hit_paddle, left_paddle_pos,right_paddle_pos,paddle_color,paddle_color_right,paddle_color_left  # o qualunque sia l'altezza originale
     right_paddle.height = 60  # o qualunque sia l'altezza originale
@@ -169,9 +169,9 @@ def reset_game():
         create_center_wall()
 
     
-# Funzione per disegnare il punteggio
+# Function to draw the score
 def draw_score():
-    score_color = (0, 200, 113)  # Colore verde
+    score_color = (0, 200, 113)  # Green color
     left_text = font.render(str(left_score), True, score_color)
     right_text = font.render(str(right_score), True, score_color)
 
@@ -184,13 +184,12 @@ def draw_start_button():
     pygame.draw.rect(screen, button_color, button_vs_computer_rect)
     screen.blit(button_vs_computer_text, button_vs_computer_text_rect.topleft)
     
-# Funzione per disegnare il muro centrale    
+# Function to draw the central wall    
 def draw_center_wall():
     for rect in wall_rects:
         pygame.draw.rect(screen, wall_color, rect)
         
-# Funzione per gestire la collisione della palla con il paddle
-
+# Function to manage the collision of the ball with the paddle
 def ball_paddle_collision(ball, paddle, is_left_paddle):
     if ball.colliderect(paddle):
         # Calcola la distanza tra il centro della palla e il centro del paddle
