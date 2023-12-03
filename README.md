@@ -24,15 +24,8 @@ Relive a classic. Here is a short implementation of the Atari game Pong in Pytho
 
 ### Requirements ###
 
-* Python >=3.4
-* Talib
-* Matplotlib
-* Requests
-* Numpy
-* Pandas
-* Json
-* Logging
-* Ccxt
+* pygame==2.5.2
+* pygame-gui==0.6.4
 
 ### Support ###
 
