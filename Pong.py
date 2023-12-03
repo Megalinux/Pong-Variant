@@ -27,35 +27,35 @@ hit_start = pygame.mixer.Sound('start_music2.wav')
 last_hit_paddle = None  # Initially, no paddle hit the ball
 is_vs_computer = False  # Set the default to two human players
 
-# Imposta le dimensioni della finestra di gioco
+# Set the size of the game window
 width, height = 640, 480
 screen_size = (640,480)
 screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption("Pong Variant by Grando Ruggero")
 
-#creazione della lista utilizzata per il muro centrare
+#Creation of the list used for the center wall
 wall_rects = []
 
-# Impostazioni del pulsante START
-button_color = (50, 205, 50)  # Colore verde
+# START button settings
+button_color = (50, 205, 50)  # Green Color
 button_width, button_height = 200, 80
 button_rect = pygame.Rect((width - button_width) / 2, (height - button_height) / 2, button_width, button_height)
 button_font = pygame.font.SysFont(None, 40)
-button_text = button_font.render('START', True, (255, 255, 255))  # Testo bianco
+button_text = button_font.render('START', True, (255, 255, 255))  # White text
 button_text_rect = button_text.get_rect(center=button_rect.center)
-# Impostazioni VS COMPUTER
+# VS COMPUTER settings
 button_vs_computer_rect = pygame.Rect((width - button_width) / 2, (height - button_height) / 2 + 100, button_width, button_height)
-button_vs_computer_text = button_font.render('VS COMPUTER', True, (255, 255, 255))  # Testo bianco
+button_vs_computer_text = button_font.render('VS COMPUTER', True, (255, 255, 255))  # White text
 button_vs_computer_text_rect = button_vs_computer_text.get_rect(center=button_vs_computer_rect.center)
 
-#titolo schermata principale
-title_font_size = 80  # Scegli la dimensione del font per il titolo
+#Main screen title
+title_font_size = 80  # Choose the font size for the title
 title_font = pygame.font.SysFont('centurygothic', title_font_size)
-title_text = title_font.render('PONG VARIANT', True, (255, 255, 255))  # Testo bianco
-title_text_rect = title_text.get_rect(center=(width // 2, 50))  # Posiziona il testo al centro, 50 pixel dall'alto
+title_text = title_font.render('PONG VARIANT', True, (255, 255, 255))  # White text
+title_text_rect = title_text.get_rect(center=(width // 2, 50))  # Place the text in the center, 50 pixels from the top
 
 
-# Punteggi dei giocatori
+# Player scores
 left_score = 0
 right_score = 0
 
