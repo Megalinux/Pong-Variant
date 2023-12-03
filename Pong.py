@@ -12,24 +12,20 @@ hit_sound_paddle_left = pygame.mixer.Sound('Pong.mp3')
 hit_sound_paddle_right = pygame.mixer.Sound('Ping.mp3')
 #sound of victory
 hit_victory = pygame.mixer.Sound('vict1.mp3')
-#suono allungamento paddle
+#paddle lengthening sound
 hit_paddle_allungamento = pygame.mixer.Sound('bonus2.wav')
-
-#la palla fuoriesce dalla schermo a destra o a sinistra
+#Sound of the ball comes out of the screen to the right or left
 out_ball = pygame.mixer.Sound('outbordo.wav')
-
-#suono collisione muro
+#Wall collision sound
 hit_wall = pygame.mixer.Sound('hit_wall.wav')
-
-#suono di comparsa del muro
+#Sound of wall appearing
 see_wall = pygame.mixer.Sound('comparsa_wall1.wav')
-
-#start music
+#Start music
 hit_start = pygame.mixer.Sound('start_music2.wav')
 
 
-last_hit_paddle = None  # Inizialmente, nessun paddle ha colpito la palla
-is_vs_computer = False  # Imposta il default a due giocatori umani
+last_hit_paddle = None  # Initially, no paddle hit the ball
+is_vs_computer = False  # Set the default to two human players
 
 # Imposta le dimensioni della finestra di gioco
 width, height = 640, 480
