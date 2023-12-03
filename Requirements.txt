@@ -1,13 +1,2 @@
-#  Finacial lib
-talib
-
-# MatplotLib
-matplotlib
-
-## Others
-requests
-json
-numpy
-pandas
-logging
-ccxt
+pygame==2.5.2
+pygame-gui==0.6.4
