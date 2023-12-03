@@ -2,15 +2,15 @@ import pygame
 import random
 from pygame.locals import *
 
-# Inizializza Pygame
+# Initialize PyGame
 pygame.init()
 
-#Gestione delle sonorità
-#suono del paddle di sinistra al tocco della palla 
+#Sound management
+#Sound of the left paddle when touching the ball
 hit_sound_paddle_left = pygame.mixer.Sound('Pong.mp3')
-#suono del paddle di destra al tocco della palla
+#sound of the left paddle when touching the ball
 hit_sound_paddle_right = pygame.mixer.Sound('Ping.mp3')
-#suono di vittoria
+#sound of victory
 hit_victory = pygame.mixer.Sound('vict1.mp3')
 #suono allungamento paddle
 hit_paddle_allungamento = pygame.mixer.Sound('bonus2.wav')
