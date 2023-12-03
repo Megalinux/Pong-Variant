@@ -143,7 +143,7 @@ def draw_background():
 # Function to reset game variables
 def reset_game():
     global left_score, right_score, ball_pos, ball_x_speed,bonus_active, left_paddle, right_paddle, height, last_hit_paddle, left_paddle_pos,right_paddle_pos,paddle_color,paddle_color_right,paddle_color_left  # o qualunque sia l'altezza originale
-    right_paddle.height = 60  # o qualunque sia l'altezza originale
+    right_paddle.height = 60  # or whatever the original height is
 
     left_score = 0
     right_score = 0
@@ -259,11 +259,11 @@ def start_screen():
         pygame.display.flip()
         
         
-# Mostra la schermata iniziale
+# Show the home screen
 start_screen()            
     
 
-# Ciclo principale del gioco
+# Main loop of the game
 running = True
 clock = pygame.time.Clock()
 
@@ -271,39 +271,39 @@ while running:
     clock.tick(60)
     
      
-    # Gestione degli eventi
+    # Event management
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
     
     
-    # Aggiorna la posizione dei paddle
+    # Update the position of the paddles
     update_paddle(left_paddle_pos, K_w, K_s)
     update_paddle(right_paddle_pos, K_UP, K_DOWN, is_vs_computer)
 
 
-    # Aggiorna la posizione della palla
+    # Update ball position
     ball_pos.x += ball_x_speed
     ball_pos.y += ball_y_speed
 
-    # Rimbalzo della palla sui bordi verticali
+    # Bounce of the ball on the vertical edges
     if ball_pos.top <= 0 or ball_pos.bottom >= height:
         ball_y_speed = -ball_y_speed
         
 
-    # Collisione della palla con i paddle
+    # Collision of the ball with the paddles
     ball_paddle_collision(ball_pos, left_paddle_pos, is_left_paddle=True)
     ball_paddle_collision(ball_pos, right_paddle_pos, is_left_paddle=False)
     
   
     
-    # Aggiorna il punteggio se la palla va oltre i bordi orizzontali
+    # Update the score if the ball goes beyond the horizontal borders
     if ball_pos.left <= 0:
         right_score += 1
-        ball_pos.x = width/2  # Reset della posizione della palla
-        ball_x_speed = -ball_x_speed  # Reset della direzione della palla
-        ball_x_speed = 2  # Reset della velocità della palla
-        ball_y_speed = random.choice([-2, 2])  # Reset della velocità della palla con direzione casuale
+        ball_pos.x = width/2  # Reset the ball position
+        ball_x_speed = -ball_x_speed  # Reset ball direction
+        ball_x_speed = 2  # Ball speed reset
+        ball_y_speed = random.choice([-2, 2])  # Reset ball speed with random direction
         if random.randint(1, 2) == 1:
             create_center_wall()
         out_ball.play()
@@ -313,23 +313,22 @@ while running:
         left_score += 1
         ball_pos.x = width/2
         ball_x_speed = -ball_x_speed
-        ball_x_speed = 2  # Reset della velocità della palla
-        ball_y_speed = random.choice([-2, 2])  # Reset della velocità della palla con direzione casuale
+        ball_x_speed = 2  # Ball speed reset
+        ball_y_speed = random.choice([-2, 2])  # Reset ball speed with random direction
         out_ball.play()
     
     for rect in wall_rects:
         if ball_pos.colliderect(rect):
-            ball_x_speed = -ball_x_speed  # la palla rimbalza quando colpisce il muro centrale
+            ball_x_speed = -ball_x_speed  # the ball bounces when it hits the center wall
             hit_wall.play()
             break 
     
-
-    # Pulisci lo schermo
+    # Clean the screen
     screen.fill(bg_color)
     
     if bonus_active:
-        # Ruotare il Testo
-        angle += 1  # Aumenta l'angolo ad ogni frame
+        # Rotate the Text
+        angle += 1  # Increase the angle with each frame
         rotated_bonus_text = pygame.transform.rotate(bonus_text, angle)
         
         rect = rotated_bonus_text.get_rect(center=bonus_pos.center)
@@ -337,16 +336,16 @@ while running:
         
         
     if bonus_active and ball_pos.colliderect(bonus_pos):
-        print('la palla ha colpito il bonus')
+        print('the ball hit the bonus')
         if last_hit is not None:
             if last_hit == "left":
-                print('raddopia il paddle left')
+                print('double the left paddle')
                 left_paddle_pos.height = 120
                 paddle_color_left = (255,0,0)
                 hit_paddle_allungamento.play()
    
             else:
-                print('raddoppia il paddle right')
+                print('double the paddle right')
                 
                 right_paddle_pos.height = 120
                 paddle_color_right = (255,0,0)
@@ -356,34 +355,34 @@ while running:
         bonus_active = False 
 
     
-    #disegna il background - rimosso per ora
+    #Draw background - removed for now
     #draw_background()   
     draw_score()
 
-    # Disegna i paddle e la palla
+    # Draw the paddles and the ball
     pygame.draw.rect(screen, paddle_color_left, left_paddle_pos)
     pygame.draw.rect(screen, paddle_color_right, right_paddle_pos)
     pygame.draw.ellipse(screen, paddle_color, ball_pos)
     
      
-    # Controlla se uno dei giocatori ha vinto
+    # Check if one of the players won
     if left_score == 3:
         draw_victory_message("left")
         pygame.display.flip()
-        pygame.time.wait(3000)  # Mostra il messaggio per 3 secondi
+        pygame.time.wait(3000)  # Show message for 3 seconds
         reset_game()
         start_screen()
     elif right_score == 3:
         draw_victory_message("right")
         pygame.display.flip()
-        pygame.time.wait(3000)  # Mostra il messaggio per 3 secondi
+        pygame.time.wait(3000)  # Show message for 3 seconds
         reset_game()
         start_screen()
 
-    # disegna il muro centrale
+    # Draw the central wall
     draw_center_wall()
-    # Aggiorna la schermata
+    # Refresh the screen
     pygame.display.flip()
 
-# Chiudi Pygame
+# Close Pygame
 pygame.quit()
