@@ -81,7 +81,6 @@ paddle_width, paddle_height = 10, 60
 left_paddle = pygame.Rect(30, height/2 - 30, paddle_width, paddle_height)  # Left Paddle 
 right_paddle = pygame.Rect(width - 40, height/2 - 30, paddle_width, paddle_height)  # Right Paddle 
 
-
 paddle_speed = 5
 left_paddle_pos = pygame.Rect(50, height/2 - paddle_height/2, paddle_width, paddle_height)
 right_paddle_pos = pygame.Rect(width - 50 - paddle_width, height/2 - paddle_height/2, paddle_width, paddle_height)
@@ -98,9 +97,6 @@ bonus_text_width, bonus_text_height = bonus_text.get_size()
 bonus_pos = pygame.Rect(random.randint(100, width - 100), random.randint(100, height - 100), bonus_text_width, bonus_text_height)
 angle = 0  # Initial rotation angle
 bonus_active = True
-
-
-
 
 def create_center_wall():
     global wall_rects
@@ -192,18 +188,18 @@ def draw_center_wall():
 # Function to manage the collision of the ball with the paddle
 def ball_paddle_collision(ball, paddle, is_left_paddle):
     if ball.colliderect(paddle):
-        # Calcola la distanza tra il centro della palla e il centro del paddle
+        # Calculate the distance between the center of the ball and the center of the paddle
         distance_from_center = abs(ball.centery - paddle.centery)
         
-        # Calcola il rapporto tra la distanza dal centro e la metà dell'altezza del paddle
+        #Calculate the ratio of the distance from the center to half the height of the paddle
         collision_position_ratio = distance_from_center / (paddle.height / 2)
         
-        # Calcola la nuova velocità della palla sulla base di dove ha colpito il paddle
-        speed_multiplier = 1 + 0.5 * collision_position_ratio  # Puoi modificare il 0.5 per rendere l'effetto più o meno pronunciato
+        # Calculate the ball's new speed based on where it hit the paddle
+        speed_multiplier = 1 + 0.5 * collision_position_ratio  # You can change the 0.5 to make the effect more or less pronounced
         
         global ball_x_speed, ball_y_speed
-        ball_x_speed = -ball_x_speed * speed_multiplier  # Inverte la direzione x della palla e modifica la velocità
-        ball_y_speed += collision_position_ratio * ball_y_speed  # Modifica la velocità y della palla
+        ball_x_speed = -ball_x_speed * speed_multiplier  # Reverses the x direction of the ball and changes the speed
+        ball_y_speed += collision_position_ratio * ball_y_speed  # Change the y speed of the ball
         
         global last_hit
 
@@ -214,24 +210,24 @@ def ball_paddle_collision(ball, paddle, is_left_paddle):
             hit_sound_paddle_right.play()
             last_hit = "right"
         
-# Funzione che gestisce la pressione del tast "VS COMPUTER"        
+# Function that manages pressing the "VS COMPUTER" button       
 def is_vs_computer_button_clicked():
     mouse_pos = pygame.mouse.get_pos()
     return button_vs_computer_rect.collidepoint(mouse_pos)
         
-# Funzione che gestisce la pressione del tasto "START"
+# Function that manages the pressing of the "START" button
 def is_button_clicked():
     mouse_pos = pygame.mouse.get_pos()
     return button_rect.collidepoint(mouse_pos)
     
-#Funzione per il messaggio di vittoria
+#Victory message function
 def draw_victory_message(winner):
-    victory_color = (255, 0, 0)  # Colore rosso per il messaggio di vittoria
+    victory_color = (255, 0, 0)  # Red color for victory message
     if winner == "left":
-        message = "Ha vinto il giocatore 1!"
+        message = "Player 1 won!"
         hit_victory.play()
     else:
-        message = "Ha vinto il giocatore 2!"
+        message = "Player 2 won!"
         hit_victory.play()
     victory_text = victory_font.render(message, True, victory_color)
     screen.blit(victory_text, (width/2 - victory_text.get_width()/2, height/2 - victory_text.get_height()/2))
@@ -257,7 +253,7 @@ def start_screen():
                     return
 
         screen.fill(bg_color)
-        screen.blit(title_text, title_text_rect.topleft)  # Disegna il testo del titolo
+        screen.blit(title_text, title_text_rect.topleft)  # Draw the title text
       
         draw_start_button()
         pygame.display.flip()
