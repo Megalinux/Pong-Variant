@@ -22,7 +22,8 @@ Relive a classic. Here is a short implementation of the Atari game Pong in Pytho
 
 ### Support ###
 
-For any questions not covered by the documentation or for further information about the game, we encourage you to send an email to webmaster@megalinux.cloud
+For any questions not covered by the documentation or for further information about the game, we encourage you to send an email to webmaster@megalinux.cloud.
+I remind you that on the The Megalinux website at the following address https://www.megalinux.cloud/pong_pygame/ you will find the Pong Variant code explained step by step.
 
 ### Bugs / Issues ###
 
